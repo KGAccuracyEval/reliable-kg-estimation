@@ -4,21 +4,8 @@ import networkx as ntx
 
 from tqdm import tqdm
 from scipy import stats
+from .utils import clusterCostFunction
 from .stratificationStrategies import stratifyCSRF
-
-
-def clusterCostFunction(heads, triples, c1=45, c2=25):
-    """
-    Compute the cluster-based annotation cost function (in hours)
-
-    :param heads: num of heads (clusters)
-    :param triples: num of triples
-    :param c1: average cost for Entity Identification (EI)
-    :param c2: average cost for Fact Verification (FV)
-    :return: the annotation cost function (in hours)
-    """
-
-    return (heads * c1 + triples * c2) / 3600
 
 
 class SRSSampler(object):
@@ -118,7 +105,7 @@ class SRSSampler(object):
             estimate = self.estimate(sample)
 
             # store stats
-            estimates += [[len(sample), estimate, cost, moe]]
+            estimates += [[len(sample), cost, estimate, moe]]
         # return stats
         return estimates
 
@@ -250,7 +237,7 @@ class TWCSSampler(object):
             estimate = self.estimate(sample)
 
             # store stats
-            estimates += [[numT, estimate, cost, moe]]
+            estimates += [[numT, cost, estimate, moe]]
         # return stats
         return estimates
 
@@ -405,6 +392,6 @@ class STWCSSampler(object):
             estimate = self.estimate(strataSamples, strataWeights)
 
             # store stats
-            estimates += [[sum(strataT), estimate, cost, moe]]
+            estimates += [[sum(strataT), cost, estimate, moe]]
         # return stats
         return estimates

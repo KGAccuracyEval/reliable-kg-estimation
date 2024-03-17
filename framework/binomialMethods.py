@@ -4,21 +4,8 @@ import networkx as ntx
 
 from tqdm import tqdm
 from scipy import stats
+from .utils import clusterCostFunction
 from .stratificationStrategies import stratifyCSRF
-
-
-def clusterCostFunction(heads, triples, c1=45, c2=25):
-    """
-    Compute the cluster-based annotation cost function (in hours)
-
-    :param heads: num of heads (clusters)
-    :param triples: num of triples
-    :param c1: average cost for Entity Identification (EI)
-    :param c2: average cost for Fact Verification (FV)
-    :return: the annotation cost function (in hours)
-    """
-
-    return (heads * c1 + triples * c2) / 3600
 
 
 class SRSSampler(object):
@@ -39,7 +26,7 @@ class SRSSampler(object):
         self.z = stats.norm.isf(self.alpha/2)
 
         # possible confidence intervals
-        self.computeMoE = {'wilson': self.computeWCI}
+        self.computeMoE = {'wilson': self.computeWCI, 'wilsonCC': self.computeCCWCI, 'agresti-coull': self.computeACCI}
 
     def estimate(self, sample):
         """
@@ -104,6 +91,58 @@ class SRSSampler(object):
         # return CI as (lowerBound, upperBound)
         return lowerB, upperB
 
+    def computeCCWCI(self, sample):
+        """
+        Compute the Continuity-Corrected Wilson Confidence Interval (CI)
+
+        :param sample: input sample (i.e., set of triples) used for estimation
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute mean estimate
+        ae = self.estimate(sample)
+        _ae = 1 - ae
+
+        n = len(sample)
+        x = sum(sample)
+
+        denom = 2 * (n + self.z ** 2)
+        center = (2 * n * ae + self.z ** 2) / denom
+
+        if x == 0:
+            lowerB = 0.0
+        else:
+            dlo = (1 + self.z * (self.z ** 2 - 2 - 1 / n + 4 * ae * (n * _ae + 1))**0.5) / denom
+            lowerB = center - dlo
+
+        if x == n:
+            upperB = 1.0
+        else:
+            dup = (1 + self.z * (self.z ** 2 + 2 - 1 / n + 4 * ae * (n * _ae - 1))**0.5) / denom
+            upperB = center + dup
+
+        # return CI as (lowerBound, upperBound)
+        return lowerB, upperB
+
+    def computeACCI(self, sample):
+        """
+        Compute the Agresti-Coull Confidence Interval (CI)
+
+        :param sample: input sample (i.e., set of triples) used for estimation
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute the adjusted sample size
+        n_ = len(sample) + self.z ** 2
+        # compute the adjusted number of successes
+        x_ = sum(sample) + (self.z ** 2)/2
+        # compute the adjusted mean estimate
+        ae_ = x_/n_
+        # compute the margin of error
+        moe = self.z * (((1/n_) * (ae_ * (1-ae_))) ** 0.5)
+        # return CI as (lowerBound, upperBound)
+        return ae_ - moe, ae_ + moe
+
     def run(self, kg, groundTruth, minSample=30, thrMoE=0.05, ciMethod='wilson', c1=45, c2=25, iters=1000):
         """
         Run the evaluation procedure on KG w/ SRS and stop when MoE < thr
@@ -143,7 +182,7 @@ class SRSSampler(object):
             estimate = self.estimate(sample)
 
             # store stats
-            estimates += [[len(sample), estimate, cost, lowerB, upperB]]
+            estimates += [[len(sample), cost, estimate, lowerB, upperB]]
         # return stats
         return estimates
 
@@ -166,7 +205,7 @@ class TWCSSampler(object):
         self.z = stats.norm.isf(self.alpha/2)
 
         # possible confidence intervals
-        self.computeMoE = {'wilson': self.computeWCI}
+        self.computeMoE = {'wilson': self.computeWCI, 'wilsonCC': self.computeCCWCI, 'agresti-coull': self.computeACCI}
 
     def estimate(self, sample):
         """
@@ -283,6 +322,74 @@ class TWCSSampler(object):
         # return CI as (lowerBound, upperBound)
         return lowerB, upperB
 
+    def computeCCWCI(self, sample, numT):
+        """
+        Compute the Continuity-Corrected Wilson Confidence Interval (CI)
+
+        :param sample: input sample (i.e., set of triples) used for estimation
+        :param numT: total number of triples in the sample
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute mean estimate
+        ae = self.estimate(sample)
+        _ae = 1 - ae
+
+        # compute the effective sample size
+        n = self.computeESS(sample, numT)
+        if n == numT:  # effective sample size equal to actual sample size
+            x = sum([sum(c) for c in sample])
+        else:  # effective sample size smaller than actual sample size
+            x = n * ae
+
+        denom = 2 * (n + self.z ** 2)
+        center = (2 * n * ae + self.z ** 2) / denom
+
+        if x == 0:
+            lowerB = 0.0
+        else:
+            dlo = (1 + self.z * (self.z ** 2 - 2 - 1 / n + 4 * ae * (n * _ae + 1))**0.5) / denom
+            lowerB = center - dlo
+
+        if x == n:
+            upperB = 1.0
+        else:
+            dup = (1 + self.z * (self.z ** 2 + 2 - 1 / n + 4 * ae * (n * _ae - 1))**0.5) / denom
+            upperB = center + dup
+
+        # return CI as (lowerBound, upperBound)
+        return lowerB, upperB
+
+    def computeACCI(self, sample, numT):
+        """
+        Compute the Agresti-Coull Confidence Interval (CI)
+
+        :param sample: input sample (i.e., set of triples) used for estimation
+        :param numT: total number of triples in the sample
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute mean estimate
+        ae = self.estimate(sample)
+
+        # compute the effective sample size
+        n = self.computeESS(sample, numT)
+        if n == numT:  # effective sample size equal to actual sample size
+            x = sum([sum(c) for c in sample])
+        else:  # effective sample size smaller than actual sample size
+            x = n * ae
+        # compute the adjusted sample size
+        n_ = n + self.z ** 2
+        # compute the adjusted number of successes
+        x_ = x + (self.z ** 2) / 2
+        # compute the adjusted mean estimate
+        ae_ = x_ / n_
+
+        # compute the margin of error
+        moe = self.z * (((1 / n_) * (ae_ * (1 - ae_))) ** 0.5)
+        # return CI as (lowerBound, upperBound)
+        return ae_ - moe, ae_ + moe
+
     def run(self, kg, groundTruth, stageTwoSize=5, minSample=30, thrMoE=0.05, ciMethod='wilson', c1=45, c2=25, iters=1000):
         """
         Run the evaluation procedure on KG w/ TWCS and stop when MoE <= thr
@@ -346,7 +453,7 @@ class TWCSSampler(object):
             estimate = self.estimate(sample)
 
             # store stats
-            estimates += [[numT, estimate, cost, lowerB, upperB]]
+            estimates += [[numT, cost, estimate, lowerB, upperB]]
         # return stats
         return estimates
 
@@ -372,7 +479,7 @@ class STWCSSampler(object):
         self.twcs = TWCSSampler(self.alpha)
 
         # possible confidence intervals
-        self.computeMoE = {'wilson': self.computeWCI}
+        self.computeMoE = {'wilson': self.computeWCI, 'wilsonCC': self.computeCCWCI, 'agresti-coull': self.computeACCI}
 
     def estimate(self, strataSamples, strataWeights):
         """
@@ -539,6 +646,86 @@ class STWCSSampler(object):
         # return CI as (lowerBound, upperBound)
         return lowerB, upperB
 
+    def computeCCWCI(self, strataSamples, strataWeights, strataT, strataC):
+        """
+        Compute the Continuity-Corrected Wilson Confidence Interval (CI)
+
+        :param strataSamples: strata samples (i.e., clusters of triples) used for estimation
+        :param strataWeights: strata weights
+        :param strataT: per-stratum number of triples in the sample
+        :param strataC: per-stratum number of clusters in the sample
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute mean estimate
+        ae = self.estimate(strataSamples, strataWeights)
+        _ae = 1 - ae
+
+        # get number of sample triples and clusters, as well as number of strata
+        numT = sum(strataT)
+        numC = sum(strataC)
+        numS = len(strataSamples)
+
+        n = self.computeESS(strataSamples, strataWeights, strataT, numC, numS)
+        if n == numT:  # effective sample size equal to actual sample size
+            x = sum([sum(c) for sample in strataSamples for c in sample])
+        else:  # effective sample size smaller than actual sample size
+            x = n * ae
+
+        denom = 2 * (n + self.z ** 2)
+        center = (2 * n * ae + self.z ** 2) / denom
+
+        if x == 0:
+            lowerB = 0.0
+        else:
+            dlo = (1 + self.z * (self.z ** 2 - 2 - 1 / n + 4 * ae * (n * _ae + 1))**0.5) / denom
+            lowerB = center - dlo
+
+        if x == n:
+            upperB = 1.0
+        else:
+            dup = (1 + self.z * (self.z ** 2 + 2 - 1 / n + 4 * ae * (n * _ae - 1))**0.5) / denom
+            upperB = center + dup
+
+        # return CI as (lowerBound, upperBound)
+        return lowerB, upperB
+
+    def computeACCI(self, strataSamples, strataWeights, strataT, strataC):
+        """
+        Compute the Agresti-Coull Confidence Interval (CI)
+
+        :param strataSamples: strata samples (i.e., clusters of triples) used for estimation
+        :param strataWeights: strata weights
+        :param strataT: per-stratum number of triples in the sample
+        :param strataC: per-stratum number of clusters in the sample
+        :return: the CI as (lowerBound, upperBound)
+        """
+
+        # compute mean estimate
+        ae = self.estimate(strataSamples, strataWeights)
+
+        # get number of sample triples and clusters, as well as number of strata
+        numT = sum(strataT)
+        numC = sum(strataC)
+        numS = len(strataSamples)
+
+        n = self.computeESS(strataSamples, strataWeights, strataT, numC, numS)
+        if n == numT:  # effective sample size equal to actual sample size
+            x = sum([sum(c) for sample in strataSamples for c in sample])
+        else:  # effective sample size smaller than actual sample size
+            x = n * ae
+        # compute the adjusted sample size
+        n_ = n + self.z ** 2
+        # compute the adjusted number of successes
+        x_ = x + (self.z ** 2) / 2
+        # compute the adjusted mean estimate
+        ae_ = x_ / n_
+
+        # compute the margin of error
+        moe = self.z * (((1 / n_) * (ae_ * (1 - ae_))) ** 0.5)
+        # return CI as (lowerBound, upperBound)
+        return ae_ - moe, ae_ + moe
+
     def run(self, kg, groundTruth, numStrata=5, stratFeature='degree', stageTwoSize=5, minSample=30, thrMoE=0.05, ciMethod='wilson', c1=45, c2=25, iters=1000):
         """
         Run the evaluation procedure on KG w/ TWCS and stop when MoE <= thr
@@ -628,6 +815,6 @@ class STWCSSampler(object):
             estimate = self.estimate(strataSamples, strataWeights)
 
             # store stats
-            estimates += [[sum(strataT), estimate, cost, lowerB, upperB]]
+            estimates += [[sum(strataT), cost, estimate, lowerB, upperB]]
         # return stats
         return estimates

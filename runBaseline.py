@@ -5,7 +5,7 @@ import random
 import json
 import os
 
-from framework import baselineMethods, labelGenerators
+from framework import baselineMethods, labelGenerators, utils
 
 
 parser = argparse.ArgumentParser()
@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 ################################
 
 parser.add_argument('--dataset', default='YAGO', choices=['YAGO', 'NELL', 'DISGENET', 'SYN'], help='Target dataset.')
-parser.add_argument('--generator', default='', choices=['TEM', 'CEM', 'SEM', ''], help='Synthetic label generation model. Default to none.')
+parser.add_argument('--generator', default='', choices=['TEM', 'CEM', ''], help='Synthetic label generation model. Default to none.')
 parser.add_argument('--errorP', default=0.1, type=float, help='Fixed error rate for synthetic label generation. Required by Triple Error Model.')
 parser.add_argument('--cSizeThr', default=3, type=int, help='Cluster size threshold. Required by Cluster Error Model.')
 parser.add_argument('--scaleF', default=0.01, type=float, help='Scaling factor for the influence of cluster size on cluster accuracy. Required by Cluster Error Model.')
@@ -27,7 +27,7 @@ parser.add_argument('--errorSD', default=0.01, type=float, help='Standard deviat
 
 parser.add_argument('--method', default='SRS', choices=['SRS', 'TWCS', 'STWCS'], help='Method of choice.')
 parser.add_argument('--minSample', default=30, type=int, help='Min sample size required to perform eval.')
-parser.add_argument('--stageTwoSize', default=5, type=int, help='Second-stage sample size. Required by two-stage sampling methods.')
+parser.add_argument('--stageTwoSize', default=3, type=int, help='Second-stage sample size. Required by two-stage sampling methods.')
 
 #######################################
 ###### Stratification parameters ######
@@ -69,8 +69,7 @@ def labelGenerator(method):
 
     return {
         'TEM': lambda: labelGenerators.TripleErrorModel(),
-        'CEM': lambda: labelGenerators.ClusterErrorModel(),
-        'SEM': lambda: labelGenerators.ScoreErrorModel()
+        'CEM': lambda: labelGenerators.ClusterErrorModel()
     }[method]()
 
 
@@ -117,13 +116,6 @@ def main():
             gParams['k'] = args.cSizeThr
             gParams['c'] = args.scaleF
             gParams['sigma'] = args.errorSD
-        if args.generator == 'SEM':  # SEM generator requires triple confidence scores
-            print('Get confidence scores for SEM')
-            with open('./dataset/' + args.dataset + '/data/ts.json', 'r') as f:  # get triple confidence scores
-                id2score = json.load(f)
-            # make confidence scores triple-centered
-            ts = [id2score[id_] for id_, triple in kg]
-            gParams['ts'] = ts
         # annotate KG w/ generator
         gt = generator.annotateKG(**gParams)
     else:  # target dataset has ground truth
@@ -145,15 +137,25 @@ def main():
     if args.method == 'STWCS':  # stratified sampling methods require stratification feature and warmup number of triples
         eParams['numStrata'] = args.numStrata
         eParams['stratFeature'] = args.stratFeature
-    else:  # the rest of the considered methods work w/ cluster based cost function
-        eParams['c1'] = args.c1
-        eParams['c2'] = args.c2
+    # all the considered methods work w/ cluster based cost function
+    eParams['c1'] = args.c1
+    eParams['c2'] = args.c2
 
     # perform the evaluation procedure for args.iterations times and compute estimates
     print('Perform KG accuracy evaluation for {} times and stop at each iteration when MoE <= {}'.format(args.iterations, args.thrMoE))
     estimates = estimator.run(**eParams)
     # convert estimates to pandas and store them
-    estimates = pd.DataFrame(estimates, columns=['annotTriples', 'estimatedAcc', 'annotCost', 'MoE'])
+    estimates = pd.DataFrame(estimates, columns=['annotTriples', 'annotCost', 'estimatedAcc', 'MoE'])
+    print(u'estimated accuracy: {}\u00B1{}'.format(round(estimates['estimatedAcc'].mean(), 2), round(estimates['estimatedAcc'].std(), 2)))
+    print(u'annotated triples: {}\u00B1{}'.format(round(estimates['annotTriples'].mean()), round(estimates['annotTriples'].std())))
+    print(u'annotation cost (hours): {}\u00B1{}'.format(round(estimates['annotCost'].mean(), 2), round(estimates['annotCost'].std(), 2)))
+    # reformat CIs as list of pairs
+    lowerBound = (estimates['estimatedAcc'] - estimates['MoE']).tolist()
+    upperBound = (estimates['estimatedAcc'] + estimates['MoE']).tolist()
+    ci = list(zip(lowerBound, upperBound))
+    # compute empirical coverage probability
+    coverage, width = utils.computeCoverage(acc, ci)
+    print(u'empirical coverage: {}\u00B1{}'.format(round(coverage, 2), round(width, 2)))
 
     # create dir (if not exists) where storing estimates
     dname = './results/'+args.dataset+'/'

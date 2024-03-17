@@ -2,6 +2,7 @@ import numpy as np
 import argparse
 import random
 import json
+import os
 
 from scipy import stats
 from tqdm import tqdm
@@ -49,6 +50,8 @@ def main():
             # update triple ID
             tID += 1
 
+    # create data dir if not exists
+    os.makedirs('../data/', exist_ok=True)
     # store KG as JSON
     with open('../data/kg.json', 'w') as out:
         json.dump(kg, out)

@@ -80,25 +80,3 @@ class ClusterErrorModel(object):
         # associate labels w/ triple IDs to create the ground truth
         groundTruth = {id_: label for i in range(len(heads)) for id_, label in zip(clusters[heads[i]], labels[i])}
         return groundTruth
-
-
-class ScoreErrorModel(object):
-    """
-    The Score Error Model (SEM) labels the triples in the KG using the triple confidence score
-    """
-
-    def annotateKG(self, kg, ts):
-        """
-        Annotate the KG based on triple confidence scores
-
-        :param kg: target KG
-        :param ts: triple confidence scores
-        :return: computed ground truth for the KG
-        """
-
-        # generate len(kg) labels where prob(1) = ts -- w/ n=1 binomial == bernoulli
-        labels = np.random.binomial(n=1, p=ts, size=len(kg))
-
-        # associate labels w/ triple IDs to create the ground truth
-        groundTruth = {kg[i][0]: labels[i] for i in range(len(kg))}
-        return groundTruth

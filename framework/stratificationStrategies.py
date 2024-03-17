@@ -33,5 +33,6 @@ def stratifyCSRF(stratFeature, numStrata):
             intervals = [csrf2unique[c] for c in csrf if (c > boundaries[b]) and (c < boundaries[b+1])]
         # store feature indices within stratum
         stratum = [i for i in range(len(stratFeature)) if stratFeature[i] in intervals]
-        strata += [stratum]
+        if stratum:  # remove empty stratum
+            strata += [stratum]
     return strata
