@@ -1,7 +1,24 @@
-# Reliable and Efficient Estimation of Knowledge Graph Accuracy
-Data accuracy is a central dimension of data quality, especially when dealing with Knowledge Graphs (KGs). Auditing the accuracy of KGs is essential to make informed decisions in entity-oriented services or applications relying on KG embeddings, such as virtual assistants. 
-However, manually evaluating the accuracy of large-scale KGs is prohibitively expensive. 
+# Efficient and Reliable Estimation of Knowledge Graph Accuracy
+Data accuracy is a central dimension of data quality, especially when dealing with Knowledge Graphs (KGs). Auditing the accuracy of KGs is essential to make informed decisions in entity-oriented services or applications. However, manually evaluating the accuracy of large-scale KGs is prohibitively expensive, and research is focused on developing efficient sampling techniques for estimating KG accuracy. This work addresses the limitations of current KG accuracy estimation methods, which rely on the Wald method to build confidence intervals, addressing reliability issues such as zero-width and overshooting intervals. Our solution, rooted in the Wilson method and tailored for complex sampling designs, overcomes these limitations and ensures applicability across various evaluation scenarios.
 
-This work contributes to the research on developing efficient sampling techniques for estimating KG accuracy. To this end, we introduce a suite of methods building upon the Wilson method for confidence interval estimation, providing a more dependable alternative to the commonly used Wald method. We also propose solutions for adapting the Wilson method to complex sampling designs, making it applicable to various evaluation scenarios. 
+## Contents
 
-The experiments show that the presented methods increase the reliability of accuracy estimates by up to four times when compared to state-of-the-art methods, while preserving or enhancing efficiency. Additionally, this consistency holds regardless of the KG size or structure.
+This repository contains the source code to estimate KG accuracy in an efficient and reliable manner.
+Instructions on how to acquire the data used for the experiments are reported below.
+
+## Installation 
+
+Clone this repository
+
+```bash
+git clone https://github.com/KGAccuracyEval/reliable-kg-estimation.git
+```
+
+Install all the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Datasets
+
