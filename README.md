@@ -3,7 +3,7 @@ Data accuracy is a central dimension of data quality, especially when dealing wi
 
 ## Contents
 
-This repository contains the source code to estimate KG accuracy in an efficient and reliable manner.
+This repository contains the source code to estimate KG accuracy in an efficient and reliable manner. <br>
 Instructions on how to acquire the data used for the experiments are reported below.
 
 ## Installation 
