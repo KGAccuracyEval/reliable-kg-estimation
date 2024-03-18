@@ -67,7 +67,42 @@ For DisGeNET, we used the rdf version ```v7.0.0```, which can be obtained using 
 wget -r -np -nH --cut-dirs=3 -P /path/to/DisGeNET_RDF_v7  http://rdf.disgenet.org/download/v7.0.0/
 ```
 
-Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., Virtuoso or GraphDB).
+Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., Virtuoso or GraphDB). <br>
+Once DisGeNET has been imported into a graph database, use the following SPARQL query to fetch the required data:
 
+```bash
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX sio: <http://semanticscience.org/resource/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?gdaID ?geneID ?associationType ?diseaseID
+WHERE {
+  ?gda dcterms:identifier ?gdaID ;
+       sio:SIO_000628 ?geneIRI, ?diseaseIRI ;
+       rdf:type ?associationTypeIRI .
+
+  ?geneIRI rdf:type ncit:C16612 ;
+           dcterms:identifier ?geneID .
+    
+  ?associationTypeIRI rdfs:label ?associationType .
+    
+  ?diseaseIRI rdf:type ncit:C7057 ;
+              dcterms:identifier ?diseaseID .
+}
+```
+
+Finally, save the results of the SPARQL query as ```gda_triples.tsv``` and store them into ```reliable-kg-estimation/dataset/DISGENET/raw_data/```.
+
+#### Preparation
+
+To prepare DisGeNET for experiments, use the following commands.
+
+Move to ```/reliable-kg-estimation/dataset/DISGENET/pre_processing/``` and run:
+
+```bash
+python prepare_dataset.py
+```
 
 
