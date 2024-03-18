@@ -22,3 +22,19 @@ pip install -r requirements.txt
 
 ## Datasets
 
+The KGs used in the exeperiments are four: YAGO, NELL, DisGeNET, and SYN 100M. <br>
+For each KG, we report how to acquire and process the raw data before running the methods to estimate KG accuracy.
+
+### YAGO & NELL
+
+#### Acquisition
+
+The YAGO and NELL datasets can be obtained using the following command:
+
+```bash
+wget https://aclanthology.org/attachments/D17-1183.Attachment.zip
+```
+
+From the  
+
+#### Processing
