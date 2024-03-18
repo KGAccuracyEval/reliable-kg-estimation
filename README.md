@@ -136,3 +136,6 @@ For instance, to use SRS with Agresti-Coull interval on DisGeNET TEM ($\varepsil
 ```bash
 python runEval.py --dataset DISGENET --generator TEM --errorP 0.5 --method SRS --ciMethod agresti-coull
 ```
+
+## Acknowledgments
+The work is partially supported by the HEREDITARY project, as part of the EU Horizon Europe research and innovation programme under Grant Agreement No GA 101137074.
