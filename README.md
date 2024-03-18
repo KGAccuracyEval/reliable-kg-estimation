@@ -22,7 +22,7 @@ pip install -r requirements.txt
 
 ## Datasets
 
-The KGs used in the exeperiments are four: YAGO, NELL, DisGeNET, and SYN 100M. <br>
+The KGs used in the experiments are four: YAGO, NELL, DisGeNET, and SYN 100M. <br>
 For each KG, we report how to acquire and process the raw data before running the methods to estimate KG accuracy.
 
 ### YAGO & NELL
