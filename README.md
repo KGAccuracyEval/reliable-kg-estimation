@@ -41,4 +41,19 @@ For YAGO, take ```supplementary/kgeval_data/YAGO/data/beliefs``` and ```suppleme
 
 For NELL, take ```supplementary/kgeval_data/NELL/data/beliefs``` and ```supplementary/kgeval_data/Mturk_data/NELL_Mturk``` and move them into ```reliable-kg-estimation/dataset/NELL/raw_data/```.
 
-#### Processing
+#### Preparation
+
+To prepare YAGO and NELL data for experiments, use the following commands.
+
+For YAGO, move to ```/reliable-kg-estimation/dataset/YAGO/pre_processing/``` and run:
+
+```bash
+python prepare_dataset.py
+```
+
+For NELL, move to ```/reliable-kg-estimation/dataset/NELL/pre_processing/``` and run:
+
+```bash
+python prepare_dataset.py
+```
+
