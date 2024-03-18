@@ -113,7 +113,26 @@ To generate the SYN 100M KG, move to ```/reliable-kg-estimation/dataset/SYN/gene
 python generateGraph.py
 ```
 
-## Usage 
+## Methods 
 
+We provide both the methods based on the Wald interval (baseline) and those based on binomial intervals -- that is, Wilson, continuity-corrected Wilson, and Agresti-Coull. The methods based on Wald can be deployed via ```runBaseline.py```, whereas those based on binomial intervals via ```runEval.py```.
 
+For instance, to use TWCS with Wald interval on YAGO, run:
 
+```bash
+python runBaseline.py --dataset YAGO --method TWCS --stageTwoSize 3
+```
+
+Similarly, to use TWCS with Wilson interval on NELL, run:
+
+```bash
+python runEval.py --dataset NELL --method TWCS --stageTwoSize 3 --ciMethod wilson
+```
+
+When working on KGs w/o ground-truth (i.e., DisGeNET and SYN 100M), the synthetic label generation model must be specified as well.
+
+For instance, to use SRS with Agresti-Coull interval on DisGeNET TEM ($\varepsilon$<sub>T</sub>=0.5), run:
+
+```bash
+python runEval.py --dataset DISGENET --generator TEM --errorP 0.5 --method SRS --ciMethod agresti-coull
+```
