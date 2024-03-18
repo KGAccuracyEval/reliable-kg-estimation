@@ -35,6 +35,8 @@ The YAGO and NELL datasets can be obtained using the following command:
 wget https://aclanthology.org/attachments/D17-1183.Attachment.zip
 ```
 
-From the  
+From within the downloaded repository (i.e., ```supplementary```), the datasets and corresponding ground-truths can be obtained as follows. <br>
+For YAGO, take ```supplementary/kgeval_data/YAGO/data/beliefs``` and ```supplementary/kgeval_data/Mturk_data/YAGO_Mturk``` and move them into ```reliable-kg-estimation/dataset/YAGO/raw_data/```. <br>
+For NELL, take ```supplementary/kgeval_data/NELL/data/beliefs``` and ```supplementary/kgeval_data/Mturk_data/NELL_Mturk``` and move them into ```reliable-kg-estimation/dataset/NELL/raw_data/```.
 
 #### Processing
