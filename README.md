@@ -57,3 +57,17 @@ For NELL, move to ```/reliable-kg-estimation/dataset/NELL/pre_processing/``` and
 python prepare_dataset.py
 ```
 
+### DisGeNET
+
+#### Acquisition
+
+For DisGeNET, we used the rdf version ```v7.0.0```, which can be obtained using the following command:
+
+```bash
+wget -r -np -nH --cut-dirs=3 -P /path/to/DisGeNET_RDF_v7  http://rdf.disgenet.org/download/v7.0.0/
+```
+
+Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., Virtuoso or GraphDB).
+
+
+
