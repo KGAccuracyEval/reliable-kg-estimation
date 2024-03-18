@@ -43,7 +43,7 @@ For NELL, take ```supplementary/kgeval_data/NELL/data/beliefs``` and ```suppleme
 
 #### Preparation
 
-To prepare YAGO and NELL data for experiments, use the following commands.
+To prepare YAGO and NELL for experiments, use the following commands.
 
 For YAGO, move to ```/reliable-kg-estimation/dataset/YAGO/pre_processing/``` and run:
 
@@ -97,12 +97,23 @@ Finally, save the results of the SPARQL query as ```gda_triples.tsv``` and store
 
 #### Preparation
 
-To prepare DisGeNET for experiments, use the following commands.
-
-Move to ```/reliable-kg-estimation/dataset/DISGENET/pre_processing/``` and run:
+To prepare DisGeNET for experiments, move to ```/reliable-kg-estimation/dataset/DISGENET/pre_processing/``` and run:
 
 ```bash
 python prepare_dataset.py
 ```
+
+### SYN 100M
+
+#### Generation
+
+To generate the SYN 100M KG, move to ```/reliable-kg-estimation/dataset/SYN/generate_data/``` and run:
+
+```bash
+python generateGraph.py
+```
+
+## Usage 
+
 
 
