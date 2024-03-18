@@ -131,7 +131,7 @@ python runEval.py --dataset NELL --method TWCS --stageTwoSize 3 --ciMethod wilso
 
 When working on KGs w/o ground-truth (i.e., DisGeNET and SYN 100M), the synthetic label generation model must be specified as well.
 
-For instance, to use SRS with Agresti-Coull interval on DisGeNET TEM ($\varepsilon$<sub>T</sub>=0.5), run:
+For instance, to use SRS with Agresti-Coull interval on DisGeNET TEM ($\varepsilon_{T}=0.5$), run:
 
 ```bash
 python runEval.py --dataset DISGENET --generator TEM --errorP 0.5 --method SRS --ciMethod agresti-coull
