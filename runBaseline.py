@@ -18,7 +18,7 @@ parser.add_argument('--dataset', default='YAGO', choices=['YAGO', 'NELL', 'DISGE
 parser.add_argument('--generator', default='', choices=['TEM', 'CEM', ''], help='Synthetic label generation model. Default to none.')
 parser.add_argument('--errorP', default=0.1, type=float, help='Fixed error rate for synthetic label generation. Required by Triple Error Model.')
 parser.add_argument('--cSizeThr', default=3, type=int, help='Cluster size threshold. Required by Cluster Error Model.')
-parser.add_argument('--scaleF', default=0.01, type=float, help='Scaling factor for the influence of cluster size on cluster accuracy. Required by Cluster Error Model.')
+parser.add_argument('--scaleF', default=0.001, type=float, help='Scaling factor for the influence of cluster size on cluster accuracy. Required by Cluster Error Model.')
 parser.add_argument('--errorSD', default=0.01, type=float, help='Standard deviation of the error (normal) distribution. Required by Cluster Error Model.')
 
 ###############################
