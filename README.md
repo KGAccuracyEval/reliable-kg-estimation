@@ -122,7 +122,7 @@ python generateGraph.py
 
 ## Methods 
 
-We provide both the methods based on the Wald interval (baseline) and those based on binomial intervals -- that is, Wilson, continuity-corrected Wilson, and Agresti-Coull. The methods based on Wald can be deployed via ```runBaseline.py```, whereas those based on binomial intervals via ```runEval.py```.
+We provide both the methods based on the Wald interval (baseline) and those based on binomial intervals (proposed) -- that is, Wilson, continuity-corrected Wilson, and Agresti-Coull. The methods based on Wald can be deployed via ```runBaseline.py```, whereas those based on binomial intervals via ```runEval.py```.
 
 For instance, to use TWCS with Wald interval on YAGO, run:
 
