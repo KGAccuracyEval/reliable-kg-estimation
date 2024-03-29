@@ -4,7 +4,7 @@ Data accuracy is a central dimension of data quality, especially when dealing wi
 ## Contents
 
 This repository contains the source code to estimate KG accuracy in an efficient and reliable manner. <br>
-Instructions on how to acquire the data used for the experiments are reported below.
+Instructions on installation, acquisition and preparation of the data used for the experiments, and deployment of baseline and proposed methods are reported below.
 
 ## Installation 
 
@@ -14,6 +14,7 @@ Clone this repository
 git clone https://github.com/KGAccuracyEval/reliable-kg-estimation.git
 ```
 
+Install Python 3.10 (preferably in a virtual environment). <br>
 Install all the requirements:
 
 ```bash
@@ -33,6 +34,12 @@ The YAGO and NELL datasets can be obtained using the following command:
 
 ```bash
 wget https://aclanthology.org/attachments/D17-1183.Attachment.zip
+```
+
+Then, use the following command to extract the ```supplementary``` repository from ```D17-1183.Attachment.zip```:
+
+```bash
+unzip D17-1183.Attachment.zip
 ```
 
 From within the downloaded repository (i.e., ```supplementary```), the datasets and corresponding ground-truths can be obtained as follows.
