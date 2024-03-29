@@ -71,7 +71,13 @@ python prepare_dataset.py
 For DisGeNET, we used the rdf version ```v7.0.0```, which can be obtained using the following command:
 
 ```bash
-wget -r -np -nH --cut-dirs=3 -P /path/to/DisGeNET_RDF_v7  http://rdf.disgenet.org/download/v7.0.0/
+wget -r -np -nH --cut-dirs=2 -A .ttl.gz -P /path/to/DisGeNET_RDF_v7 http://rdf.disgenet.org/download/v7.0.0/
+```
+
+Together with DisGeNET data, use the following command to obtain the DisGeNET ontology:
+
+```bash
+wget -P /path/to/DisGeNET_RDF_v7 http://semanticscience.org/ontology/sio.owl
 ```
 
 Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., GraphDB or Virtuoso). <br>
