@@ -83,11 +83,14 @@ PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ncit: <http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wi: <http://purl.org/ontology/wi/core#>
 
 SELECT DISTINCT ?gdaID ?geneID ?associationType ?diseaseID
 WHERE {
   ?gda dcterms:identifier ?gdaID ;
        sio:SIO_000628 ?geneIRI, ?diseaseIRI ;
+       sio:SIO_000216 ?scoreIRI ;
+       sio:SIO_000253 ?sourceIRI ;
        rdf:type ?associationTypeIRI .
 
   ?geneIRI rdf:type ncit:C16612 ;
@@ -97,6 +100,18 @@ WHERE {
     
   ?diseaseIRI rdf:type ncit:C7057 ;
               dcterms:identifier ?diseaseID .
+
+  ?scoreIRI sio:SIO_000300 ?gdaScore .
+
+  ?sourceIRI dcterms:title ?source ;
+             wi:evidence ?sourceTypeIRI .
+
+  ?sourceTypeIRI rdfs:label ?sourceType .
+
+  ?gda sio:SIO_000772 ?pmidIRI ;
+       dcterms:description ?sentence .
+
+  ?pmidIRI dcterms:identifier ?pmid .
 }
 ```
 
