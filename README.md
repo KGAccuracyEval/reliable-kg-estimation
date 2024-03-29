@@ -74,7 +74,7 @@ For DisGeNET, we used the rdf version ```v7.0.0```, which can be obtained using 
 wget -r -np -nH --cut-dirs=3 -P /path/to/DisGeNET_RDF_v7  http://rdf.disgenet.org/download/v7.0.0/
 ```
 
-Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., Virtuoso or GraphDB). <br>
+Then, import the contents of the data stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., GraphDB or Virtuoso). <br>
 Once DisGeNET has been imported into a graph database, use the following SPARQL query to fetch the required data:
 
 ```bash
@@ -143,6 +143,12 @@ For instance, to use SRS with Agresti-Coull interval on DisGeNET TEM ($\varepsil
 ```bash
 python runEval.py --dataset DISGENET --generator TEM --errorP 0.5 --method SRS --ciMethod agresti-coull
 ```
+
+Similarly, to use STWCS with Wilson interval on DisGeNET CEM, run:
+
+```bash
+python runEval.py --dataset DISGENET --generator CEM --method STWCS --stageTwoSize 5 --stratFeature degree --numStrata 2 --ciMethod wilson
+``` 
 
 The description of all the available arguments can be obtained by running ```python runBaseline.py --help```, for baseline methods, and ```python runEval.py --help```, for proposed methods. 
 
