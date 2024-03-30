@@ -94,9 +94,11 @@ PREFIX wi: <http://purl.org/ontology/wi/core#>
 SELECT DISTINCT ?gdaID ?geneID ?associationType ?diseaseID
 WHERE {
   ?gda dcterms:identifier ?gdaID ;
+       dcterms:description ?sentence ;
        sio:SIO_000628 ?geneIRI, ?diseaseIRI ;
        sio:SIO_000216 ?scoreIRI ;
        sio:SIO_000253 ?sourceIRI ;
+       sio:SIO_000772 ?pmidIRI ;
        rdf:type ?associationTypeIRI .
 
   ?geneIRI rdf:type ncit:C16612 ;
@@ -113,9 +115,6 @@ WHERE {
              wi:evidence ?sourceTypeIRI .
 
   ?sourceTypeIRI rdfs:label ?sourceType .
-
-  ?gda sio:SIO_000772 ?pmidIRI ;
-       dcterms:description ?sentence .
 
   ?pmidIRI dcterms:identifier ?pmid .
 }
