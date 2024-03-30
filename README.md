@@ -80,8 +80,7 @@ Together with DisGeNET data, use the following command to obtain the DisGeNET on
 wget -P /path/to/DisGeNET_RDF_v7 http://semanticscience.org/ontology/sio.owl
 ```
 
-Then, import the contents stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., GraphDB or Virtuoso). <br>
-Once DisGeNET has been imported into a graph database, use the following SPARQL query to fetch the required data:
+Then, import the contents stored in ```/path/to/DisGeNET_RDF_v7``` into a graph database of choice (e.g., GraphDB or Virtuoso). Once DisGeNET has been imported into a graph database, use the following SPARQL query to fetch the required data:
 
 ```bash
 PREFIX dcterms: <http://purl.org/dc/terms/>
