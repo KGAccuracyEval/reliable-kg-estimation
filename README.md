@@ -119,7 +119,7 @@ WHERE {
 }
 ```
 
-Finally, save the results of the SPARQL query as ```gda_triples.tsv``` and store them into ```reliable-kg-estimation/dataset/DISGENET/raw_data/```.
+Finally, save the results of the SPARQL query as ```gda_triples.tsv``` and store them into ```reliable-kg-estimation/dataset/DISGENET/raw_data/```. <b>Caveat:</b> store ```gda_triples.tsv``` with a header containing column names.
 
 #### Preparation
 
