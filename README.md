@@ -173,3 +173,20 @@ The description of all the available arguments can be obtained by running ```pyt
 
 ## Acknowledgments
 The work is partially supported by the HEREDITARY project, as part of the EU Horizon Europe research and innovation programme under Grant Agreement No GA 101137074.
+
+## How to Cite
+If you use or extend our work, please cite the following:
+
+```
+@article{marchesin_silvello-vldb2024,
+  title = {Efficient and Reliable Estimation of Knowledge Graph Accuracy},
+  author = {S. Marchesin and G. Silvello},
+  journal = {Proc. {VLDB} Endow.},
+  volume = {17},
+  number = {9},
+  pages = {2392--2404},
+  year = {2024},
+  doi = {10.14778/3665844.3665865},
+  url = {https://www.vldb.org/pvldb/vol17/p2392-marchesin.pdf},
+}
+```
