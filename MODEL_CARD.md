@@ -14,7 +14,7 @@
 | License | MIT (see LICENSE file) |
 | Repository and DOI | https://github.com/KGAccuracyEval/reliable-kg-estimation (no Zenodo DOI) |
 | Release date | 27 October 2023 (last update 2 July 2024) |
-| Related task or deliverable | |
+| Related task or deliverable | T3.2 |
 | How to cite | S. Marchesin and G. Silvello. Efficient and Reliable Estimation of Knowledge Graph Accuracy. PVLDB 17(9): 2392-2404, 2024. doi:10.14778/3665844.3665865 |
 
 ## 2. Intended use
